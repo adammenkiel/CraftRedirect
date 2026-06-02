@@ -1,5 +1,4 @@
 #include "input_stream.hpp"
-#include <boost/asio.hpp>
 
 input_stream::input_stream(std::vector<uint8_t>& vector) : buf(vector) {}
 
@@ -38,4 +37,27 @@ std::string input_stream::readString() {
     );
     offset += size;
     return textstr;
+}
+
+std::vector<uint8_t> input_stream::readBytes(size_t len) {
+    if(len + offset > buf.size()) {
+        throw std::runtime_error("String out of bound");
+    }
+    std::vector<uint8_t> copyBytes(
+        buf.begin() + offset,
+        buf.begin() + offset + len
+    );
+
+    offset += len;
+    return copyBytes;
+}
+
+uint32_t input_stream::readableBytes() {
+    return buf.size() - offset;
+}
+
+uint16_t input_stream::readUShort() {
+    uint16_t first = readByte();
+    uint16_t second = readByte();
+    return (first << 8) | second;
 }

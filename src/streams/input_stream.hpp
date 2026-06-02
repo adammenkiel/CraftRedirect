@@ -16,5 +16,5 @@ class input_stream {
         std::string readString();
         uint8_t readByte();
         uint16_t readUShort();
-        std::vector<uint8_t>& readBytes(int len);
+        std::vector<uint8_t> readBytes(size_t len);
 };
