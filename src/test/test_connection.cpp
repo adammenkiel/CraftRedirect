@@ -4,7 +4,7 @@
 #include <spdlog/spdlog.h>
 
 
-#include "streams/output_stream.hpp"
+#include "protocol/streams/output_stream.hpp"
 
 using boost::asio::ip::tcp;
 

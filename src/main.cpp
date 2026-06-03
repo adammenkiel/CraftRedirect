@@ -2,7 +2,8 @@
 #include <boost/asio.hpp>
 #include <spdlog/spdlog.h>
 
-#include "streams/output_stream.hpp"
+#include "protocol/streams/output_stream.hpp"
+#include "protocol/streams/input_stream.hpp"
 #include "test/test_connection.hpp"
 
 using boost::asio::ip::tcp;
@@ -11,10 +12,12 @@ int main() {
     boost::asio::io_context io;
     tcp::endpoint endpoint(tcp::v4(), 25565);
     tcp::acceptor acceptor(io);
+
     acceptor.open(endpoint.protocol());
     acceptor.set_option(boost::asio::socket_base::reuse_address(true));
     acceptor.bind(endpoint);
     acceptor.listen();
+    
     std::vector<std::thread> threads;
 
     while(true) {
@@ -25,7 +28,7 @@ int main() {
                 uint32_t packetLengthTemp = 0;
                 int position = 0;
                 uint8_t currentByte;
-                    
+
                 while (true) {
                     boost::asio::read(socket, boost::asio::buffer(&currentByte, 1));
                     packetLengthTemp |= (currentByte & 0x7F) << position;
@@ -35,6 +38,8 @@ int main() {
                 }
                 std::vector<uint8_t> packetBytes(packetLengthTemp);
                 boost::asio::read(socket, boost::asio::buffer(packetBytes));
+                input_stream input_stream(packetBytes);
+                
             }
         });
     }

@@ -1,5 +1,4 @@
 #include "output_stream.hpp"
-#include <boost/asio.hpp>
 
 
 void output_stream::writeVarInt(uint32_t value) {
