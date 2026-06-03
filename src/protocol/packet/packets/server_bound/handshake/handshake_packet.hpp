@@ -23,4 +23,6 @@ class handshake_packet : public packet {
         void write(output_stream&) override;
 
         uint32_t get_packet_id() override;
+
+        packet_state get_state() override;
 };

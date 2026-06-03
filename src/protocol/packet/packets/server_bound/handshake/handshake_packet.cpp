@@ -1,4 +1,4 @@
-#include "protocol/packet/packets/server_bound/handshake_packet.hpp"
+#include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 
 handshake_packet::handshake_packet(
             uint32_t version_number,
@@ -15,6 +15,10 @@ handshake_packet::~handshake_packet() {}
 
 uint32_t handshake_packet::get_packet_id() {
     return 0;
+}
+
+packet_state handshake_packet::get_state() {
+    return packet_state::HANDSHAKE;
 }
 
 void handshake_packet::read(input_stream& input) {
