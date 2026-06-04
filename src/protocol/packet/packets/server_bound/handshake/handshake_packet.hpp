@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "protocol/packet/packet.hpp"
 
 class handshake_packet : public packet {
@@ -25,4 +26,6 @@ class handshake_packet : public packet {
         uint32_t get_packet_id() override;
 
         packet_state get_state() override;
+
+        std::unique_ptr<packet> clone() override;
 };

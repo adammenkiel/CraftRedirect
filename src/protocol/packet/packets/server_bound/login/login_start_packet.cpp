@@ -26,3 +26,7 @@ void login_start_packet::write(output_stream& output) {
     output.writeString(username);
     output.writeBytes(uuid_bytes);
 }
+
+std::unique_ptr<packet> login_start_packet::clone() {
+    return std::make_unique<login_start_packet>(*this);
+}

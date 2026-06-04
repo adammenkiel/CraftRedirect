@@ -5,7 +5,6 @@ session::session(tcp::socket& socket) : socket(socket) {}
 
 void session::handle(packet& packet) {
     
-    //packet.read();
 }
 
 void session::sendPacket(packet& packet) {

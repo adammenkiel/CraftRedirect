@@ -7,5 +7,5 @@ class packet_encoder {
     private:
         session& session;
     public:
-        void write_packet(packet& packet);
+        void send_packet(packet& packet);
 };

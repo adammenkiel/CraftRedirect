@@ -34,3 +34,7 @@ void handshake_packet::write(output_stream& output) {
     output.writeVarInt(server_port);
     output.writeByte(state);
 }
+
+std::unique_ptr<packet> handshake_packet::clone() {
+    return std::make_unique<handshake_packet>(*this);
+}

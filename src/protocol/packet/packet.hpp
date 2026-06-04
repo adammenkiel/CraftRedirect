@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "protocol/packet/packet_state.hpp"
 #include "protocol/streams/output_stream.hpp"
 #include "protocol/streams/input_stream.hpp"
@@ -10,4 +11,5 @@ class packet {
         virtual packet_state get_state() = 0;
         virtual void read(input_stream& stream) = 0;
         virtual void write(output_stream& stream) = 0;
+        virtual std::unique_ptr<packet> clone() = 0;
 };

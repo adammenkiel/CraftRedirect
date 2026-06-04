@@ -23,4 +23,6 @@ class login_start_packet : public packet {
         uint32_t get_packet_id() override;
 
         packet_state get_state() override;
+
+        std::unique_ptr<packet> clone() override;
 };
