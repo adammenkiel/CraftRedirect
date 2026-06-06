@@ -14,6 +14,8 @@ class login_start_packet : public packet {
             std::vector<uint8_t> uuid_bytes
         );
 
+        login_start_packet();
+
         ~login_start_packet() override;
 
         void read(input_stream&) override;

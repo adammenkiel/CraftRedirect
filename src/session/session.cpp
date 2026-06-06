@@ -1,10 +1,10 @@
+#include <iostream>
 #include "session.hpp"
-
 
 session::session(tcp::socket& socket) : socket(socket) {}
 
-void session::handle(packet& packet) {
-    
+void session::handle(std::unique_ptr<packet> handled_packet) {
+    std::cout << "Received packet" << std::endl;
 }
 
 void session::sendPacket(packet& packet) {

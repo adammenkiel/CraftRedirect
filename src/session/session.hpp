@@ -13,7 +13,7 @@ class session {
 
         session(tcp::socket& socket);
 
-        void handle(packet& packet);
+        void handle(std::unique_ptr<packet> packet);
 
         void sendPacket(packet& packet);
 };

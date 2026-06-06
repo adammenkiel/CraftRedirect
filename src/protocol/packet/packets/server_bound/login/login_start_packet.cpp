@@ -7,6 +7,8 @@ login_start_packet::login_start_packet(
     username(username),
     uuid_bytes(uuid_bytes) {}
 
+login_start_packet::login_start_packet() {}
+
 login_start_packet::~login_start_packet() {}
 
 uint32_t login_start_packet::get_packet_id() {

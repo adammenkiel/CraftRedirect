@@ -11,6 +11,8 @@ handshake_packet::handshake_packet(
         server_port(server_port),
         state(state) {}
 
+handshake_packet::handshake_packet() {}
+
 handshake_packet::~handshake_packet() {}
 
 uint32_t handshake_packet::get_packet_id() {

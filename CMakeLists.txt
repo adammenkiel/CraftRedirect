@@ -20,6 +20,7 @@ target_link_libraries(app PRIVATE
     spdlog::spdlog
 )
 
+set_target_properties(app PROPERTIES OUTPUT_NAME "craft_redirect_app")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

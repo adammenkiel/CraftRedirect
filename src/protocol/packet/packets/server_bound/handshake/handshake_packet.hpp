@@ -10,6 +10,8 @@ class handshake_packet : public packet {
         uint32_t server_port;
         uint8_t state;
 
+        handshake_packet();
+
         handshake_packet(
             uint32_t version_number,
             std::string server_host,
