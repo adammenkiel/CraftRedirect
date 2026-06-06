@@ -3,14 +3,14 @@
 
 #include "session.hpp"
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
+#include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
 
 session::session(tcp::socket& socket) : socket(socket) {}
 
 void session::handle(std::unique_ptr<packet> handled_packet) {
     if(dynamic_cast<handshake_packet*>(handled_packet.get())) {
         handshake_packet* received_handshake = dynamic_cast<handshake_packet*>(handled_packet.get());
-        spdlog::info("Received handshake packet!");
-        spdlog::info("Packet data: Version: {0}, Host: {1}, Port: {2}, State: {3}",
+        spdlog::info("Received handshake packet! MC version: {0}, Host: {1}, Port: {2}, State: {3}",
              received_handshake->version_number,
              received_handshake->server_host,
              received_handshake->server_port,
@@ -20,6 +20,14 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
             state = packet_state::STATUS;
         if(received_handshake->state == 2)
             state = packet_state::LOGIN;        
+    }
+
+    if(dynamic_cast<login_start_packet*>(handled_packet.get())) {
+        login_start_packet* received_login_start = dynamic_cast<login_start_packet*>(handled_packet.get());
+        spdlog::info("Logged new player: {0}",
+             received_login_start->username
+            );
+        nickname = received_login_start->username;
     }
 }
 

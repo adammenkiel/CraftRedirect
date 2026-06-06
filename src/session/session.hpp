@@ -9,6 +9,7 @@ class session {
     public:
         packet_state state = packet_state::HANDSHAKE;
         tcp::socket& socket;
+        std::string nickname = "";
         bool compression = false;
 
         session(tcp::socket& socket);
