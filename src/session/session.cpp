@@ -1,10 +1,16 @@
 #include <iostream>
+#include <spdlog/spdlog.h>
+
 #include "session.hpp"
+#include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 
 session::session(tcp::socket& socket) : socket(socket) {}
 
 void session::handle(std::unique_ptr<packet> handled_packet) {
-    std::cout << "Received packet" << std::endl;
+    if(dynamic_cast<handshake_packet*>(handled_packet.get())) {
+        spdlog::info("Received handshake packet!");
+        state = packet_state::LOGIN;        
+    }
 }
 
 void session::sendPacket(packet& packet) {
