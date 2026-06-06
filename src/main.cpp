@@ -43,9 +43,7 @@ int main() {
 
     while(true) {
         tcp::socket socket = acceptor.accept();
-        spdlog::info("Socket connecting");
         threads.emplace_back([socket = std::move(socket), packets = std::move(packets)]() mutable {
-            spdlog::info("New connection");
             packet_state current_state = packet_state::HANDSHAKE;
             bool compression = false;
             session player_session(socket);
@@ -67,7 +65,6 @@ int main() {
                 input_stream input_stream(packetBytes);
 
                 uint32_t packet_id = input_stream.readVarInt(); //temporary
-                spdlog::info("Received packet with id: {0}", packet_id);
                 std::unique_ptr<packet> packet = packets.get_packet_by_id(packet_bound::SERVER, player_session.state, packet_id);
                 packet->read(input_stream);
                 player_session.handle(std::move(packet));

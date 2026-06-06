@@ -8,8 +8,18 @@ session::session(tcp::socket& socket) : socket(socket) {}
 
 void session::handle(std::unique_ptr<packet> handled_packet) {
     if(dynamic_cast<handshake_packet*>(handled_packet.get())) {
+        handshake_packet* received_handshake = dynamic_cast<handshake_packet*>(handled_packet.get());
         spdlog::info("Received handshake packet!");
-        state = packet_state::LOGIN;        
+        spdlog::info("Packet data: Version: {0}, Host: {1}, Port: {2}, State: {3}",
+             received_handshake->version_number,
+             received_handshake->server_host,
+             received_handshake->server_port,
+             received_handshake->state
+            );
+        if(received_handshake->state == 1)
+            state = packet_state::STATUS;
+        if(received_handshake->state == 2)
+            state = packet_state::LOGIN;        
     }
 }
 

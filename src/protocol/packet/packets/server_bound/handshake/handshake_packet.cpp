@@ -26,7 +26,7 @@ packet_state handshake_packet::get_state() {
 void handshake_packet::read(input_stream& input) {
     version_number = input.readVarInt();
     server_host = input.readString();
-    server_port = input.readVarInt();
+    server_port = input.readUShort();
     state = input.readByte();
 }
 
