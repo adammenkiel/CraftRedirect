@@ -33,7 +33,7 @@ void handshake_packet::read(input_stream& input) {
 void handshake_packet::write(output_stream& output) {
     output.writeVarInt(version_number);
     output.writeString(server_host);
-    output.writeVarInt(server_port);
+    output.writeUShort(server_port);
     output.writeByte(state);
 }
 
