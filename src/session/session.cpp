@@ -4,6 +4,7 @@
 #include "session.hpp"
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
+#include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
 
 session::session(tcp::socket& socket) : socket(socket) {}
 
@@ -26,6 +27,10 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
              received_login_start->username
             );
         nickname = received_login_start->username;
+    }
+
+    if(auto* received_request = dynamic_cast<status_request_packet*>(handled_packet.get())) {
+        spdlog::info("Ping detected!");   
     }
 }
 

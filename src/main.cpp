@@ -8,6 +8,8 @@
 #include "protocol/packet/packet_registry.hpp"
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
+#include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
+#include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "session/session.hpp"
 
 using boost::asio::ip::tcp;
@@ -20,6 +22,13 @@ int main() {
     packets.register_packet(packet_bound::SERVER, packet_state::HANDSHAKE, handshake);
     login_start_packet login_start = login_start_packet();
     packets.register_packet(packet_bound::SERVER, packet_state::LOGIN, login_start);
+    status_request_packet request = status_request_packet();
+    packets.register_packet(packet_bound::SERVER, packet_state::STATUS, request);
+
+
+    status_response_packet response = status_response_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::STATUS, response);
+
 
     boost::asio::io_context io;
     tcp::endpoint endpoint(tcp::v4(), 25565);
