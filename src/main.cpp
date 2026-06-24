@@ -17,18 +17,9 @@ int main() {
     packet_registry packets;
 
     handshake_packet handshake = handshake_packet();
-    packets.register_packet(
-        packet_bound::SERVER,
-        packet_state::HANDSHAKE,
-        handshake
-    );
-
+    packets.register_packet(packet_bound::SERVER, packet_state::HANDSHAKE, handshake);
     login_start_packet login_start = login_start_packet();
-    packets.register_packet(
-        packet_bound::SERVER,
-        packet_state::LOGIN,
-        login_start
-    );
+    packets.register_packet(packet_bound::SERVER, packet_state::LOGIN, login_start);
 
     boost::asio::io_context io;
     tcp::endpoint endpoint(tcp::v4(), 25565);
