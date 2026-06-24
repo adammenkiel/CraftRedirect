@@ -6,6 +6,8 @@
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
 
+#include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
+
 session::session(tcp::socket& socket) : socket(socket) {}
 
 void session::handle(std::unique_ptr<packet> handled_packet) {
@@ -30,7 +32,9 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
     }
 
     if(auto* received_request = dynamic_cast<status_request_packet*>(handled_packet.get())) {
-        spdlog::info("Ping detected!");   
+        spdlog::info("Ping detected!");
+        status_response_packet packet = status_response_packet(R"({"version":{"name":"CraftRedirect/Kuailianjie","protocol":767},"description":"§4CraftRedirect JSON","players":{"max":1000,"online":500}})");
+        this->sendPacket(packet);
     }
 }
 
