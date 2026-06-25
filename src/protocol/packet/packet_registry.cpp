@@ -9,7 +9,9 @@ std::unique_ptr<packet> packet_registry::get_packet_by_id(packet_bound bound, pa
     info.bound = bound;
     info.packet_id = packet_id;
     info.state = state;
-
+    /*if((packets.find(info) != packets.end())) {
+        throw std::runtime_error("Packet not found!");
+    }*/
     return packets.at(info).get()->clone();
 }
 

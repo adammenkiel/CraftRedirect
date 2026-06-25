@@ -16,18 +16,17 @@ using boost::asio::ip::tcp;
 
 int main() {
 
-    packet_registry packets;
+    auto packets = std::make_shared<packet_registry>();
 
     handshake_packet handshake = handshake_packet();
-    packets.register_packet(packet_bound::SERVER, packet_state::HANDSHAKE, handshake);
+    packets->register_packet(packet_bound::SERVER, packet_state::HANDSHAKE, handshake);
     login_start_packet login_start = login_start_packet();
-    packets.register_packet(packet_bound::SERVER, packet_state::LOGIN, login_start);
+    packets->register_packet(packet_bound::SERVER, packet_state::LOGIN, login_start);
     status_request_packet request = status_request_packet();
-    packets.register_packet(packet_bound::SERVER, packet_state::STATUS, request);
-
+    packets->register_packet(packet_bound::SERVER, packet_state::STATUS, request);
 
     status_response_packet response = status_response_packet();
-    packets.register_packet(packet_bound::CLIENT, packet_state::STATUS, response);
+    packets->register_packet(packet_bound::CLIENT, packet_state::STATUS, response);
 
 
     boost::asio::io_context io;
@@ -43,32 +42,37 @@ int main() {
 
     while(true) {
         tcp::socket socket = acceptor.accept();
-        threads.emplace_back([socket = std::move(socket), packets = std::move(packets)]() mutable {
+        threads.emplace_back([socket = std::move(socket), packets]() mutable {
             packet_state current_state = packet_state::HANDSHAKE;
             bool compression = false;
             session player_session(socket);
+            try {
+                while(true) {
+                    uint32_t packetLengthTemp = 0;
+                    int position = 0;
+                    uint8_t currentByte;
 
-            while(true) {
-                uint32_t packetLengthTemp = 0;
-                int position = 0;
-                uint8_t currentByte;
+                    while (true) {
+                        boost::asio::read(socket, boost::asio::buffer(&currentByte, 1));
+                        packetLengthTemp |= (currentByte & 0x7F) << position;
+                        if ((currentByte & 0x80) == 0) break;
+                        position += 7;
+                        if (position >= 32) throw std::runtime_error("VarInt is too big"); // temporary
+                    }
+                    std::vector<uint8_t> packetBytes(packetLengthTemp);
+                    boost::asio::read(socket, boost::asio::buffer(packetBytes));
+                    input_stream input_stream(packetBytes);
 
-                while (true) {
-                    boost::asio::read(socket, boost::asio::buffer(&currentByte, 1));
-                    packetLengthTemp |= (currentByte & 0x7F) << position;
-                    if ((currentByte & 0x80) == 0) break;
-                    position += 7;
-                    if (position >= 32) throw std::runtime_error("VarInt is too big"); // temporary
+                    uint32_t packet_id = input_stream.readVarInt(); //temporary
+                    std::unique_ptr<packet> packet = packets->get_packet_by_id(packet_bound::SERVER, player_session.state, packet_id);
+                    packet->read(input_stream);
+                    player_session.handle(std::move(packet));
+
                 }
-                std::vector<uint8_t> packetBytes(packetLengthTemp);
-                boost::asio::read(socket, boost::asio::buffer(packetBytes));
-                input_stream input_stream(packetBytes);
-
-                uint32_t packet_id = input_stream.readVarInt(); //temporary
-                std::unique_ptr<packet> packet = packets.get_packet_by_id(packet_bound::SERVER, player_session.state, packet_id);
-                packet->read(input_stream);
-                player_session.handle(std::move(packet));
-
+            } catch(std::exception& err) {
+                spdlog::info("Disconnected! Reason:");
+                socket.close();
+                return;
             }
         });
     }
