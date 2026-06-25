@@ -61,3 +61,11 @@ uint16_t input_stream::readUShort() {
     uint16_t second = readByte();
     return (first << 8) | second;
 }
+
+uint64_t input_stream::readLong() {
+    uint64_t number = 0;
+    for(int i = 0; i < 8; i++) {
+        number = (number << 8) | readByte();
+    }
+    return number;
+}

@@ -1,16 +1,20 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <typeinfo>
 
 #include "session.hpp"
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
+#include "protocol/packet/packets/server_bound/status/ping_request_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
+#include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
 
 session::session(tcp::socket& socket) : socket(socket) {}
 
 void session::handle(std::unique_ptr<packet> handled_packet) {
+    
     if(auto* received_handshake = dynamic_cast<handshake_packet*>(handled_packet.get())) {
         spdlog::info("Received handshake packet! MC version: {0}, Host: {1}, Port: {2}, State: {3}",
              received_handshake->version_number,
@@ -32,10 +36,16 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
     }
 
     if(auto* received_request = dynamic_cast<status_request_packet*>(handled_packet.get())) {
-        spdlog::info("Ping detected!");
-        status_response_packet packet = status_response_packet(R"({"version":{"name":"CraftRedirect/Kuailianjie","protocol":767},"description":"§4CraftRedirect JSON","players":{"max":1000,"online":500}})");
+        spdlog::info("Request detected!");
+        status_response_packet packet = status_response_packet(R"({"version":{"name":"CraftRedirect/Kuailianjie","protocol":767},"description":"       §8§k||| §4CraftRedirect §8§k|||\n§cYour proxy server for minecraft","players":{"max":0,"online":500}})");
         this->sendPacket(packet);
     }
+    if(auto* received_ping_request = dynamic_cast<ping_request_packet*>(handled_packet.get())) {
+        spdlog::info("Ping response");
+        ping_response_packet packet = ping_response_packet(received_ping_request->time);
+        this->sendPacket(packet);
+    }
+
 }
 
 void session::sendPacket(packet& packet) {

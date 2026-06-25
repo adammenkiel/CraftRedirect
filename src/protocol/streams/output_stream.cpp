@@ -37,3 +37,9 @@ void output_stream::writeBytes(std::vector<uint8_t>& data) {
 const std::vector<uint8_t>& output_stream::get_buffer() const {
     return buf;
 }
+
+void output_stream::writeLong(uint64_t value) {
+    for(int i = 0; i < 8; i++) {
+        buf.push_back((value >> (7*8 - i*8)) & 0xFF);
+    }
+}

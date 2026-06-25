@@ -17,4 +17,5 @@ class input_stream {
         uint8_t readByte();
         uint16_t readUShort();
         std::vector<uint8_t> readBytes(size_t len);
+        uint64_t readLong();
 };
