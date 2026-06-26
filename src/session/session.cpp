@@ -37,15 +37,18 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
 
     if(auto* received_request = dynamic_cast<status_request_packet*>(handled_packet.get())) {
         spdlog::info("Request detected!");
-        status_response_packet packet = status_response_packet(R"({"version":{"name":"CraftRedirect/Kuailianjie","protocol":767},"description":"       §8§k||| §4CraftRedirect §8§k|||\n§cYour proxy server for minecraft","players":{"max":0,"online":500}})");
+        //Simple motd in JSON format.
+        status_response_packet packet = status_response_packet(
+            R"({"version":{"name":"CraftRedirect/Kuailianjie","protocol":767},"description":"       §8§k||| §4CraftRedirect §8§k|||\n§cYour proxy server for minecraft","players":{"max":0,"online":500}})"
+        );
         this->sendPacket(packet);
     }
+
     if(auto* received_ping_request = dynamic_cast<ping_request_packet*>(handled_packet.get())) {
         spdlog::info("Ping response");
         ping_response_packet packet = ping_response_packet(received_ping_request->time);
         this->sendPacket(packet);
     }
-
 }
 
 void session::sendPacket(packet& packet) {

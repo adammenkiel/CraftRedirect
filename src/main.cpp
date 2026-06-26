@@ -35,9 +35,8 @@ int main() {
     ping_response_packet ping_response = ping_response_packet();
     packets->register_packet(packet_bound::CLIENT, packet_state::STATUS, ping_response);
 
-
     boost::asio::io_context io;
-    tcp::endpoint endpoint(tcp::v4(), 25565);
+    tcp::endpoint endpoint(tcp::v4(), 12121);
     tcp::acceptor acceptor(io);
 
     acceptor.open(endpoint.protocol());
@@ -77,7 +76,7 @@ int main() {
 
                 }
             } catch(std::exception& err) {
-                spdlog::info("Disconnected! Reason:");
+                spdlog::info("Disconnected! Reason: {}", err.what());
                 socket.close();
                 return;
             }
