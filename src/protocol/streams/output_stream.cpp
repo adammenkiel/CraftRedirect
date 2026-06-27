@@ -1,5 +1,5 @@
 #include "output_stream.hpp"
-
+#include "protocol/obj/login_success_property.hpp"
 
 void output_stream::writeVarInt(uint32_t value) {
     while (true) {
@@ -43,3 +43,5 @@ void output_stream::writeLong(uint64_t value) {
         buf.push_back((value >> (7*8 - i*8)) & 0xFF);
     }
 }
+
+void output_stream::writeProperties(std::vector<login_success_property> peoperties) {}

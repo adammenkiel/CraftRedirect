@@ -1,4 +1,5 @@
 #pragma once
+#include "protocol/obj/login_success_property.hpp"
 
 #include <iostream>
 #include <vector>
@@ -18,4 +19,5 @@ class input_stream {
         uint16_t readUShort();
         std::vector<uint8_t> readBytes(size_t len);
         uint64_t readLong();
+        std::vector<login_success_property> readProperties();
 };

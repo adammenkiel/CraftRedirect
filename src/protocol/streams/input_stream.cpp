@@ -1,5 +1,6 @@
 #include "input_stream.hpp"
 
+
 input_stream::input_stream(std::vector<uint8_t>& vector) : buf(vector) {}
 
 uint32_t input_stream::readVarInt() {
@@ -68,4 +69,8 @@ uint64_t input_stream::readLong() {
         number = (number << 8) | readByte();
     }
     return number;
+}
+
+std::vector<login_success_property> input_stream::readProperties() {
+    
 }
