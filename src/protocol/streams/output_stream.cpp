@@ -1,5 +1,4 @@
 #include "output_stream.hpp"
-#include "protocol/obj/login_success_property.hpp"
 
 void output_stream::writeVarInt(uint32_t value) {
     while (true) {
@@ -44,4 +43,18 @@ void output_stream::writeLong(uint64_t value) {
     }
 }
 
-void output_stream::writeProperties(std::vector<login_success_property> peoperties) {}
+void output_stream::writeBoolean(bool boolean) {
+    this->writeByte(boolean);
+}
+
+void output_stream::writeProperties(std::vector<login_success_property> properties) {
+    this->writeVarInt(properties.size());
+    for(login_success_property property : properties) {
+        this->writeString(property.name);
+        this->writeString(property.value);
+        this->writeBoolean(property.is_signed);
+        if(property.is_signed) {
+            this->writeString(property.signature);
+        }
+    }
+}

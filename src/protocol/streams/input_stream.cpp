@@ -71,6 +71,21 @@ uint64_t input_stream::readLong() {
     return number;
 }
 
+bool input_stream::readBoolean() {
+    return readByte() != 0;
+}
+
+
 std::vector<login_success_property> input_stream::readProperties() {
-    
+    std::vector<login_success_property> properties;
+    uint32_t size = this->readVarInt();
+    for(int i = 0; i < size; i++) {
+        std::string property_name = this->readString();
+        std::string property_value = this->readString();
+        bool is_signed = this->readBoolean();
+        std::string signature = (is_signed ? this->readString() : "");
+        login_success_property property(property_name, property_value, is_signed, signature);
+        properties.push_back(property);
+    }    
+    return properties;
 }

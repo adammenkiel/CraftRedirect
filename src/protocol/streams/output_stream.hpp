@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include "protocol/obj/login_success_property.hpp"
 
 class output_stream {
     private:
@@ -16,5 +17,6 @@ class output_stream {
         void writeBytes(std::vector<uint8_t>& data);
         void writeLong(uint64_t value);
         void writeProperties(std::vector<login_success_property> properties);
+        void writeBoolean(bool boolean);
         const std::vector<uint8_t>& get_buffer() const;
 };
