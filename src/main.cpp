@@ -10,9 +10,11 @@
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/ping_request_packet.hpp"
+#include "protocol/packet/packets/server_bound/login/login_acknowledged_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
+#include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
 #include "session/session.hpp"
 
 using boost::asio::ip::tcp;
@@ -29,11 +31,16 @@ int main() {
     packets->register_packet(packet_bound::SERVER, packet_state::STATUS, request);
     ping_request_packet ping_request = ping_request_packet();
     packets->register_packet(packet_bound::SERVER, packet_state::STATUS, ping_request);
+    login_acknowledged_packet login_acknowledged = login_acknowledged_packet();
+    packets->register_packet(packet_bound::SERVER, packet_state::LOGIN, login_acknowledged);
 
     status_response_packet response = status_response_packet();
     packets->register_packet(packet_bound::CLIENT, packet_state::STATUS, response);
     ping_response_packet ping_response = ping_response_packet();
     packets->register_packet(packet_bound::CLIENT, packet_state::STATUS, ping_response);
+    login_success_packet login_success = login_success_packet();
+    packets->register_packet(packet_bound::CLIENT, packet_state::LOGIN, login_success);
+
 
     boost::asio::io_context io;
     tcp::endpoint endpoint(tcp::v4(), 12121);
