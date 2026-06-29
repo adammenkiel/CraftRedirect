@@ -10,6 +10,9 @@
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
+#include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
+
+#include "protocol/packet/unknown_packet.hpp"
 
 session::session(tcp::socket& socket) : socket(socket) {}
 
@@ -29,10 +32,17 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
     }
 
     if(auto* received_login_start = dynamic_cast<login_start_packet*>(handled_packet.get())) {
-            spdlog::info("Logged new player: {0}",
-             received_login_start->username
-            );
+        spdlog::info("Logged new player: {0}",
+            received_login_start->username
+        );
+        auto uuid = received_login_start->uuid_bytes;
         nickname = received_login_start->username;
+        std::vector<login_success_property> properties;
+
+
+        login_success_packet success_packet = login_success_packet(uuid, nickname, properties, false);
+        this->sendPacket(success_packet);
+        this->state = packet_state::CONFIGURATION;
     }
 
     if(auto* received_request = dynamic_cast<status_request_packet*>(handled_packet.get())) {
@@ -48,6 +58,14 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         spdlog::info("Ping response");
         ping_response_packet packet = ping_response_packet(received_ping_request->time);
         this->sendPacket(packet);
+    }
+
+    if(auto* received_unknown_packet = dynamic_cast<unknown_packet*>(handled_packet.get())) {
+        std::string result = "";
+        for(uint8_t byte : received_unknown_packet->packet_bytes) {
+            result += std::to_string(static_cast<int>(byte)) + ", ";
+        }
+        spdlog::info("Received unknown packet {0} bytes: {1}", received_unknown_packet->get_packet_id(), result);
     }
 }
 

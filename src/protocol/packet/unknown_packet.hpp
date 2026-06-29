@@ -1,0 +1,36 @@
+#pragma once
+
+#include "protocol/packet/packet.hpp"
+#include <array>
+
+class unknown_packet : public packet {
+    public:
+        packet_state state;
+        uint32_t packet_id;
+        std::vector<uint8_t> packet_bytes;
+
+        unknown_packet(
+            packet_state state,
+            uint32_t packet_id
+        );
+
+        unknown_packet(
+            packet_state state,
+            uint32_t packet_id,
+            std::vector<uint8_t> packet_bytes
+        );
+
+        unknown_packet();
+
+        ~unknown_packet() override;
+
+        void read(input_stream&) override;
+
+        void write(output_stream&) override;
+
+        uint32_t get_packet_id() override;
+
+        packet_state get_state() override;
+
+        std::unique_ptr<packet> clone() override;
+};

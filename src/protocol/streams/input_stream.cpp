@@ -89,3 +89,7 @@ std::vector<login_success_property> input_stream::readProperties() {
     }    
     return properties;
 }
+
+std::vector<uint8_t> input_stream::readFully() {
+    return this->readBytes(this->buf.size() - offset);
+}

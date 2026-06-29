@@ -20,5 +20,6 @@ class input_stream {
         std::vector<uint8_t> readBytes(size_t len);
         uint64_t readLong();
         bool readBoolean();
+        std::vector<uint8_t> readFully();
         std::vector<login_success_property> readProperties();
 };

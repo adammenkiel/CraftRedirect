@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 
 struct login_success_property {
