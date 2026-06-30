@@ -11,6 +11,7 @@
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/ping_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_acknowledged_packet.hpp"
+#include "protocol/packet/packets/server_bound/configuration/client_information_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
@@ -33,6 +34,9 @@ int main() {
     packets->register_packet(packet_bound::SERVER, packet_state::STATUS, ping_request);
     login_acknowledged_packet login_acknowledged = login_acknowledged_packet();
     packets->register_packet(packet_bound::SERVER, packet_state::LOGIN, login_acknowledged);
+    client_information_packet client_information = client_information_packet();
+    packets->register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, client_information);
+
 
     status_response_packet response = status_response_packet();
     packets->register_packet(packet_bound::CLIENT, packet_state::STATUS, response);

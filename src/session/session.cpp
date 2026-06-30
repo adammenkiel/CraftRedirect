@@ -8,6 +8,7 @@
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/ping_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_acknowledged_packet.hpp"
+#include "protocol/packet/packets/server_bound/configuration/client_information_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
@@ -63,6 +64,10 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
     if(auto* received_acknowledge = dynamic_cast<login_acknowledged_packet*>(handled_packet.get())) {
         spdlog::info("Received login acknowledged packet! State set into CONFIGURATION!");
         this->state = packet_state::CONFIGURATION;
+    }
+
+    if(auto* received_client_information = dynamic_cast<client_information_packet*>(handled_packet.get())) {
+        spdlog::info("Received client info!");
     }
 
     if(auto* received_unknown_packet = dynamic_cast<unknown_packet*>(handled_packet.get())) {
