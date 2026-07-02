@@ -5,6 +5,7 @@
 #include "protocol/streams/output_stream.hpp"
 #include "protocol/streams/input_stream.hpp"
 #include "protocol/packet/packet_registry.hpp"
+#include "protocol/codec/packet_decoder.hpp"
 
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
@@ -48,6 +49,8 @@ int main() {
     login_success_packet login_success = login_success_packet();
     packets->register_packet(packet_bound::CLIENT, packet_state::LOGIN, login_success);
 
+    auto decoder = std::make_shared<packet_decoder>(packets);
+
     boost::asio::io_context io;
     boost::asio::stream_file file(io, "registry_data.bin", boost::asio::stream_file::read_only);
 
@@ -63,30 +66,13 @@ int main() {
 
     while(true) {
         tcp::socket socket = acceptor.accept();
-        threads.emplace_back([socket = std::move(socket), packets]() mutable {
+        threads.emplace_back([socket = std::move(socket), decoder]() mutable {
             packet_state current_state = packet_state::HANDSHAKE;
             bool compression = false;
             session player_session(socket);
             try {
                 while(true) {
-                    uint32_t packetLengthTemp = 0;
-                    int position = 0;
-                    uint8_t currentByte;
-
-                    while (true) {
-                        boost::asio::read(socket, boost::asio::buffer(&currentByte, 1));
-                        packetLengthTemp |= (currentByte & 0x7F) << position;
-                        if ((currentByte & 0x80) == 0) break;
-                        position += 7;
-                        if (position >= 32) throw std::runtime_error("VarInt is too big"); // temporary
-                    }
-                    std::vector<uint8_t> packetBytes(packetLengthTemp);
-                    boost::asio::read(socket, boost::asio::buffer(packetBytes));
-                    input_stream input_stream(packetBytes);
-
-                    uint32_t packet_id = input_stream.readVarInt(); //temporary
-                    std::unique_ptr<packet> packet = packets->get_packet_by_id(packet_bound::SERVER, player_session.state, packet_id);
-                    packet->read(input_stream);
+                    std::unique_ptr<packet> packet = decoder->readPacket(packet_bound::SERVER, player_session.state, socket);
                     player_session.handle(std::move(packet));
 
                 }
