@@ -12,6 +12,7 @@
 #include "protocol/packet/packets/server_bound/status/ping_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_acknowledged_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/client_information_packet.hpp"
+#include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
@@ -36,6 +37,8 @@ int main() {
     packets->register_packet(packet_bound::SERVER, packet_state::LOGIN, login_acknowledged);
     client_information_packet client_information = client_information_packet();
     packets->register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, client_information);
+    known_packs_packet known_packs = known_packs_packet();
+    packets->register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, known_packs);
 
 
     status_response_packet response = status_response_packet();
@@ -45,8 +48,9 @@ int main() {
     login_success_packet login_success = login_success_packet();
     packets->register_packet(packet_bound::CLIENT, packet_state::LOGIN, login_success);
 
-
     boost::asio::io_context io;
+    boost::asio::stream_file file(io, "registry_data.bin", boost::asio::stream_file::read_only);
+
     tcp::endpoint endpoint(tcp::v4(), 12121);
     tcp::acceptor acceptor(io);
 
