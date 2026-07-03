@@ -51,9 +51,18 @@ int main() {
 
     auto decoder = std::make_shared<packet_decoder>(packets);
 
-    boost::asio::io_context io;
-    boost::asio::stream_file file(io, "registry_data.bin", boost::asio::stream_file::read_only);
 
+    boost::asio::io_context io;
+    spdlog::info("Loading registry_data.bin ...");
+    boost::asio::stream_file file(io, "registry_data.bin", boost::asio::stream_file::read_only);
+    try {
+        while(true) {
+             std::unique_ptr<packet> config_packet = decoder->readPacket(packet_bound::CLIENT, packet_state::CONFIGURATION, file);
+             spdlog::info("Loaded config packet ID: {0}", config_packet->get_packet_id());
+        }
+    } catch(std::exception& err) {
+        spdlog::info("Registry and Update Tags packets loaded from registry_data.bin!");
+    }
     tcp::endpoint endpoint(tcp::v4(), 12121);
     tcp::acceptor acceptor(io);
 
@@ -83,6 +92,5 @@ int main() {
             }
         });
     }
-    //test_connection("localhost", "25565");
     return 0;
 }
