@@ -9,6 +9,7 @@
 #include "protocol/packet/packets/server_bound/login/login_acknowledged_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/client_information_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
+#include "protocol/packet/packets/server_bound/configuration/finish_configuration_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
@@ -29,7 +30,8 @@ void craft_redirect_server::registerAllPackets() {
     packets.register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, client_information);
     known_packs_packet known_packs = known_packs_packet();
     packets.register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, known_packs);
-
+    finish_configuration_packet finish_config = finish_configuration_packet();
+    packets.register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, finish_config);
 
     status_response_packet response = status_response_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::STATUS, response);
@@ -57,12 +59,12 @@ void craft_redirect_server::loadRegistryPackets() {
     } catch(std::exception& err) {
         spdlog::info("Registry and Update Tags packets loaded from registry_data.bin!");
     }
-    tcp::endpoint endpoint(tcp::v4(), 12121);
-    tcp::acceptor acceptor(io);
 }
 
 void craft_redirect_server::startServer() {
     
+
+    spdlog::info("Server is starting......");
     boost::asio::io_context io;
     tcp::endpoint endpoint(tcp::v4(), 12121);
     tcp::acceptor acceptor(io);
@@ -73,11 +75,9 @@ void craft_redirect_server::startServer() {
     acceptor.listen();
     
     std::vector<std::thread> threads;
-
-
+    spdlog::info("Server started on: 127.0.0.1:12121 !");
     while(true) {
         tcp::socket socket = acceptor.accept();
-
         std::shared_ptr<craft_redirect_server> server = shared_from_this();
         threads.emplace_back([socket = std::move(socket), server]() mutable {
             packet_state current_state = packet_state::HANDSHAKE;
