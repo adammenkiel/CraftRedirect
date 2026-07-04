@@ -50,10 +50,6 @@ void craft_redirect_server::loadRegistryPackets() {
     try {
         while(true) {
              std::unique_ptr<packet> config_packet = decoder.readPacket(packet_bound::CLIENT, packet_state::CONFIGURATION, file);
-             spdlog::info("Loaded config packet ID: {0} ", config_packet->get_packet_id());
-             if(auto* received_unknown_packet = dynamic_cast<unknown_packet*>(config_packet.get())) {
-                spdlog::info("Size len: {0}", received_unknown_packet->packet_bytes.size());
-             }
              this->config_packets.push_back(std::move(config_packet));
         }
     } catch(std::exception& err) {
@@ -62,8 +58,6 @@ void craft_redirect_server::loadRegistryPackets() {
 }
 
 void craft_redirect_server::startServer() {
-    
-
     spdlog::info("Server is starting......");
     boost::asio::io_context io;
     tcp::endpoint endpoint(tcp::v4(), 12121);
@@ -76,6 +70,11 @@ void craft_redirect_server::startServer() {
     
     std::vector<std::thread> threads;
     spdlog::info("Server started on: 127.0.0.1:12121 !");
+    
+    threads.emplace_back([]() mutable {
+
+    });
+    
     while(true) {
         tcp::socket socket = acceptor.accept();
         std::shared_ptr<craft_redirect_server> server = shared_from_this();
@@ -86,9 +85,7 @@ void craft_redirect_server::startServer() {
             auto decoder = packet_decoder(server->packets);
             try {
                 while(true) {
-                    std::unique_ptr<packet> packet = decoder.readPacket(packet_bound::SERVER, player_session.state, socket);
-                    player_session.handle(std::move(packet));
-
+                    player_session.handle(std::move(decoder.readPacket(packet_bound::SERVER, player_session.state, socket)));
                 }
             } catch(std::exception& err) {
                 spdlog::info("Disconnected! Reason: {}", err.what());
@@ -97,6 +94,7 @@ void craft_redirect_server::startServer() {
             }
         });
     }
+    
 }
 
 void craft_redirect_server::run() {

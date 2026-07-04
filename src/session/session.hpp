@@ -22,4 +22,6 @@ class session {
         void handle(std::unique_ptr<packet> packet);
 
         void sendPacket(packet& packet);
+
+        void disconnect();
 };
