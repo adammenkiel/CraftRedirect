@@ -13,6 +13,7 @@
 #include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/finish_configuration_packet.hpp"
 
+#include "protocol/packet/packets/client_bound/play/client_keep_alive_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/client_known_packs_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/config_payload_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/feature_flags_packet.hpp"
@@ -40,6 +41,8 @@ void craft_redirect_server::registerAllPackets() {
     packets.register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, finish_config);
 
 
+    client_keep_alive_packet client_keep_alive = client_keep_alive_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, client_keep_alive);
     client_known_packs_packet client_known_packs = client_known_packs_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::CONFIGURATION, client_known_packs);
     config_payload_packet conf_payload = config_payload_packet();
@@ -87,9 +90,16 @@ void craft_redirect_server::startServer() {
     std::vector<std::thread> threads;
     spdlog::info("Server started on: 127.0.0.1:12121 !");
     
+    //temporary solution
     threads.emplace_back([server]() mutable {
         while(true) {
-            spdlog::info("Testing...! {0} sessions connected!", server->sessions.size());
+            client_keep_alive_packet packet = client_keep_alive_packet(0);
+            for(std::shared_ptr<session> s : server->sessions) {
+                try {
+                    if(s->state == packet_state::PLAY)
+                        s->sendPacket(packet);
+                } catch(std::exception& err) {}
+            }
             std::this_thread::sleep_for(std::chrono::seconds(5));
         }
     });
