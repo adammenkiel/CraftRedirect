@@ -1,22 +1,29 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <typeinfo>
+#include <thread>
+#include <chrono>
 
 #include "session.hpp"
+#include "craft_redirect_server.hpp"
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/ping_request_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_acknowledged_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/client_information_packet.hpp"
+#include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
 
+
 #include "protocol/packet/unknown_packet.hpp"
 
-session::session(tcp::socket& socket) : socket(socket) {}
+session::session(std::shared_ptr<craft_redirect_server> server, tcp::socket& socket) : 
+    socket(socket),
+    server(server) {}
 
 void session::handle(std::unique_ptr<packet> handled_packet) {
     
@@ -66,8 +73,32 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         this->state = packet_state::CONFIGURATION;
     }
 
+
+    // temporary solutions below!!
     if(auto* received_client_information = dynamic_cast<client_information_packet*>(handled_packet.get())) {
+        unknown_packet payload = unknown_packet(packet_state::CONFIGURATION, 1,
+             std::vector<uint8_t>({15, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 98, 114, 97, 110, 100, 5, 80, 97, 112, 101, 114}));
+        this->sendPacket(payload);
+        unknown_packet feature_flags = unknown_packet(packet_state::CONFIGURATION, 0x0C,
+            std::vector<uint8_t>({1, 17, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 118, 97, 110, 105, 108, 108, 97}));
+        this->sendPacket(feature_flags);
+        unknown_packet known_flags = unknown_packet(packet_state::CONFIGURATION, 0x0E,
+            std::vector<uint8_t>({1, 9, 109, 105, 110, 101, 99, 114, 97, 102, 116, 4, 99, 111, 114, 101, 6, 49, 46, 50, 49, 46, 49}));
+        this->sendPacket(known_flags);
+
         spdlog::info("Received client info!");
+    }
+
+    if(auto* known_packs = dynamic_cast<known_packs_packet*>(handled_packet.get())) {
+        for(auto& packet : server->config_packets) {
+            if(auto* received_unknown_packet = dynamic_cast<unknown_packet*>(packet.get())) {
+                spdlog::info("Packet ID: {0}, size: {1}", received_unknown_packet->get_packet_id(), received_unknown_packet->packet_bytes.size());
+            }
+            this->sendPacket(*packet->clone());
+        }
+        unknown_packet success = unknown_packet(packet_state::CONFIGURATION, 3, std::vector<uint8_t>({}));
+        this->sendPacket(success);
+        spdlog::info("Known packs packet received correctly!");
     }
 
     if(auto* received_unknown_packet = dynamic_cast<unknown_packet*>(handled_packet.get())) {

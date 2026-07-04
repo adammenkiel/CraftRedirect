@@ -6,9 +6,9 @@
 
 class packet_decoder {
     private:
-        std::shared_ptr<packet_registry> registry;
+        packet_registry& registry;
     public:
-        packet_decoder(std::shared_ptr<packet_registry> registry) : registry(registry) {};
+        packet_decoder(packet_registry& registry) : registry(registry) {};
         
         template <typename SyncReadStream>
         std::unique_ptr<packet> readPacket(packet_bound bound, packet_state state, SyncReadStream& stream) {
@@ -28,7 +28,7 @@ class packet_decoder {
             input_stream input_stream(packetBytes);
         
             uint32_t packet_id = input_stream.readVarInt(); //temporary
-            std::unique_ptr<packet> packet = registry->get_packet_by_id(bound, state, packet_id);
+            std::unique_ptr<packet> packet = registry.get_packet_by_id(bound, state, packet_id);
             packet->read(input_stream);
             return packet;
         }
