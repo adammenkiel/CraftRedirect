@@ -12,13 +12,16 @@
 
 #include "session/session.hpp"
 
-class craft_redirect_server : public std::enable_shared_from_this<craft_redirect_server>{
+class session;
+
+class craft_redirect_server : public std::enable_shared_from_this<craft_redirect_server> {
     private:
         void registerAllPackets();
         void loadRegistryPackets();
         void startServer();
     public:
         packet_registry packets;
+        std::vector<std::shared_ptr<session>> sessions;
         std::vector<std::unique_ptr<packet>> config_packets;
         void run();
 };

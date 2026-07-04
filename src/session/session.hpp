@@ -9,7 +9,7 @@ class craft_redirect_server;
 
 using boost::asio::ip::tcp;
 
-class session {
+class session : public std::enable_shared_from_this<session> {
     public:
         packet_state state = packet_state::HANDSHAKE;
         tcp::socket& socket;

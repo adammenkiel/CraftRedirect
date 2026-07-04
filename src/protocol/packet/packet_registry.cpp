@@ -27,5 +27,4 @@ void packet_registry::register_packet(packet_bound bound, packet_state state, pa
     info.state = state;
 
     packets[info] = reg_packet.clone();
-    spdlog::info("Registered new packet: {0}", reg_packet.get_packet_id());
 }

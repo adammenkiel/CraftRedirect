@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "craft_redirect_server.hpp"
 
 #include "protocol/packet/unknown_packet.hpp"
@@ -11,11 +13,15 @@
 #include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/finish_configuration_packet.hpp"
 
+#include "protocol/packet/packets/client_bound/configuration/client_known_packs_packet.hpp"
+#include "protocol/packet/packets/client_bound/configuration/config_payload_packet.hpp"
+#include "protocol/packet/packets/client_bound/configuration/feature_flags_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
 
 void craft_redirect_server::registerAllPackets() {
+    spdlog::info("Registering packets...");
     handshake_packet handshake = handshake_packet();
     packets.register_packet(packet_bound::SERVER, packet_state::HANDSHAKE, handshake);
     login_start_packet login_start = login_start_packet();
@@ -33,12 +39,20 @@ void craft_redirect_server::registerAllPackets() {
     finish_configuration_packet finish_config = finish_configuration_packet();
     packets.register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, finish_config);
 
+
+    client_known_packs_packet client_known_packs = client_known_packs_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::CONFIGURATION, client_known_packs);
+    config_payload_packet conf_payload = config_payload_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::CONFIGURATION, conf_payload);
+    feature_flags_packet feature_flags = feature_flags_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::CONFIGURATION, feature_flags);
     status_response_packet response = status_response_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::STATUS, response);
     ping_response_packet ping_response = ping_response_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::STATUS, ping_response);
     login_success_packet login_success = login_success_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::LOGIN, login_success);
+    spdlog::info("Finished!");
 }
 
 void craft_redirect_server::loadRegistryPackets() {
@@ -68,24 +82,27 @@ void craft_redirect_server::startServer() {
     acceptor.bind(endpoint);
     acceptor.listen();
     
+    std::shared_ptr<craft_redirect_server> server = shared_from_this();
+
     std::vector<std::thread> threads;
     spdlog::info("Server started on: 127.0.0.1:12121 !");
     
-    threads.emplace_back([]() mutable {
-
+    threads.emplace_back([server]() mutable {
+        while(true) {
+            spdlog::info("Testing...! {0} sessions connected!", server->sessions.size());
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+        }
     });
     
     while(true) {
         tcp::socket socket = acceptor.accept();
-        std::shared_ptr<craft_redirect_server> server = shared_from_this();
         threads.emplace_back([socket = std::move(socket), server]() mutable {
             packet_state current_state = packet_state::HANDSHAKE;
-            bool compression = false;
-            session player_session(server, socket);
+            std::shared_ptr<session> player_session = std::make_shared<session>(server, socket);
             auto decoder = packet_decoder(server->packets);
             try {
                 while(true) {
-                    player_session.handle(std::move(decoder.readPacket(packet_bound::SERVER, player_session.state, socket)));
+                    player_session->handle(std::move(decoder.readPacket(packet_bound::SERVER, player_session->state, socket)));
                 }
             } catch(std::exception& err) {
                 spdlog::info("Disconnected! Reason: {}", err.what());

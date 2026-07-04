@@ -6,6 +6,7 @@
 
 #include "session.hpp"
 #include "craft_redirect_server.hpp"
+#include "protocol/streams/output_stream.hpp"
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
@@ -15,6 +16,9 @@
 #include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/finish_configuration_packet.hpp"
 
+#include "protocol/packet/packets/client_bound/configuration/client_known_packs_packet.hpp"
+#include "protocol/packet/packets/client_bound/configuration/feature_flags_packet.hpp"
+#include "protocol/packet/packets/client_bound/configuration/config_payload_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
@@ -47,9 +51,9 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         );
         auto uuid = received_login_start->uuid_bytes;
         nickname = received_login_start->username;
+        server->sessions.push_back(shared_from_this());
+
         std::vector<login_success_property> properties;
-
-
         login_success_packet success_packet = login_success_packet(uuid, nickname, properties, false);
         this->sendPacket(success_packet);
     }
@@ -58,7 +62,19 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         spdlog::info("Request detected!");
         //Simple motd in JSON format.
         status_response_packet packet = status_response_packet(
-            R"({"version":{"name":"CraftRedirect/Kuailianjie","protocol":767},"description":"       §8§k||| §4CraftRedirect §8§k|||\n§cYour proxy server for minecraft","players":{"max":0,"online":500}})"
+            R"(
+                {
+                    "version": {
+                        "name":"CraftRedirect/Kuailianjie",
+                        "protocol":767
+                    },
+                    "description":"       §8§k||| §4CraftRedirect §8§k|||\n§cYour proxy server for minecraft",
+                    "players": {
+                        "max":0,
+                        "online":500
+                    }
+                }
+            )"
         );
         this->sendPacket(packet);
     }
@@ -77,14 +93,22 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
 
     // temporary solutions below!!
     if(auto* received_client_information = dynamic_cast<client_information_packet*>(handled_packet.get())) {
-        unknown_packet payload = unknown_packet(packet_state::CONFIGURATION, 1,
-             std::vector<uint8_t>({15, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 98, 114, 97, 110, 100, 5, 80, 97, 112, 101, 114}));
+
+        output_stream out;
+        std::string engine_name = "CraftRedirect/Kuailianjie";
+        out.writeString(engine_name);
+        config_payload_packet payload = config_payload_packet("minecraft:brand", out.get_buffer());
         this->sendPacket(payload);
-        unknown_packet feature_flags = unknown_packet(packet_state::CONFIGURATION, 0x0C,
-            std::vector<uint8_t>({1, 17, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 118, 97, 110, 105, 108, 108, 97}));
+        
+        feature_flags_packet feature_flags = feature_flags_packet(1, std::vector<std::string>({"minecraft:vanilla"}));
         this->sendPacket(feature_flags);
-        unknown_packet known_flags = unknown_packet(packet_state::CONFIGURATION, 0x0E,
-            std::vector<uint8_t>({1, 9, 109, 105, 110, 101, 99, 114, 97, 102, 116, 4, 99, 111, 114, 101, 6, 49, 46, 50, 49, 46, 49}));
+
+        std::array<std::string, 3> flag = {
+            "minecraft",
+            "core",
+            "1.21.1"
+        };
+        client_known_packs_packet known_flags = client_known_packs_packet(1, std::vector<std::array<std::string, 3>>({flag}));
         this->sendPacket(known_flags);
 
         spdlog::info("Received client info!");
