@@ -161,7 +161,11 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         while(label_stream >> tmp_arg) {
             args.push_back(tmp_arg);
         }
-        
+        if((server->command_map.find(command_name) == server->command_map.end())) {
+            return;
+        }
+        std::shared_ptr<command> command = server->command_map.at(command_name);
+        command->execute(shared_from_this(), args);
     }
 
     #ifdef DEBUG

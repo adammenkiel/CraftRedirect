@@ -4,6 +4,8 @@
 
 #include "protocol/packet/unknown_packet.hpp"
 
+#include "command/commands/test_command.hpp"
+
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
 #include "protocol/packet/packets/server_bound/status/status_request_packet.hpp"
@@ -59,6 +61,10 @@ void craft_redirect_server::registerAllPackets() {
     login_success_packet login_success = login_success_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::LOGIN, login_success);
     spdlog::info("Finished!");
+}
+
+void craft_redirect_server::registerCommands() {
+    command_map["test"] = std::make_shared<test_command>();
 }
 
 void craft_redirect_server::loadRegistryPackets() {
@@ -130,5 +136,6 @@ void craft_redirect_server::startServer() {
 void craft_redirect_server::run() {
     this->registerAllPackets();
     this->loadRegistryPackets();
+    this->registerCommands();
     this->startServer();
 }
