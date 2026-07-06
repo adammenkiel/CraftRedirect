@@ -12,6 +12,7 @@
 #include "protocol/packet/packets/server_bound/configuration/client_information_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/finish_configuration_packet.hpp"
+#include "protocol/packet/packets/server_bound/play/chat_command_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/play/client_keep_alive_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/client_known_packs_packet.hpp"
@@ -39,6 +40,8 @@ void craft_redirect_server::registerAllPackets() {
     packets.register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, known_packs);
     finish_configuration_packet finish_config = finish_configuration_packet();
     packets.register_packet(packet_bound::SERVER, packet_state::CONFIGURATION, finish_config);
+    chat_command_packet chat_command = chat_command_packet();
+    packets.register_packet(packet_bound::SERVER, packet_state::PLAY, chat_command);
 
 
     client_keep_alive_packet client_keep_alive = client_keep_alive_packet();

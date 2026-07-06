@@ -15,6 +15,7 @@
 #include "protocol/packet/packets/server_bound/configuration/client_information_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/known_packs_packet.hpp"
 #include "protocol/packet/packets/server_bound/configuration/finish_configuration_packet.hpp"
+#include "protocol/packet/packets/server_bound/play/chat_command_packet.hpp"
 
 #include "protocol/packet/packets/client_bound/configuration/client_known_packs_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/feature_flags_packet.hpp"
@@ -147,6 +148,22 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         spdlog::info("World sent!");
     }
     
+    if(auto* received_chat_command = dynamic_cast<chat_command_packet*>(handled_packet.get())) {
+        std::string command_label = received_chat_command->command_label;
+        spdlog::info("{0} issued the command: /{1}", this->nickname, command_label);
+        std::vector<std::string> args;
+        std::istringstream label_stream(command_label);
+
+        std::string command_name;
+        label_stream >> command_name;
+
+        std::string tmp_arg;
+        while(label_stream >> tmp_arg) {
+            args.push_back(tmp_arg);
+        }
+        
+    }
+
     #ifdef DEBUG
     if(auto* received_unknown_packet = dynamic_cast<unknown_packet*>(handled_packet.get())) {
         std::string result = "";
