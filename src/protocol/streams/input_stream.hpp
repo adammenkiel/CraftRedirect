@@ -1,10 +1,14 @@
 #pragma once
 #include "protocol/obj/login_success_property.hpp"
+//#include "protocol/nbt/nbt_base.hpp"
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <memory>
+
+class nbt_base;
 
 class input_stream {
     private:
@@ -20,6 +24,8 @@ class input_stream {
         std::vector<uint8_t> readBytes(size_t len);
         uint64_t readLong();
         bool readBoolean();
+        std::string readUTF();
+        std::unique_ptr<nbt_base> readNBT();
         std::vector<uint8_t> readFully();
         std::vector<login_success_property> readProperties();
 };

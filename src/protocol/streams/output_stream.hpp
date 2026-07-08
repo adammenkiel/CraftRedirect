@@ -4,7 +4,11 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <memory>
 #include "protocol/obj/login_success_property.hpp"
+//#include "protocol/nbt/nbt_base.hpp"
+
+class nbt_base; 
 
 class output_stream {
     private:
@@ -18,5 +22,7 @@ class output_stream {
         void writeLong(uint64_t value);
         void writeProperties(std::vector<login_success_property> properties);
         void writeBoolean(bool boolean);
+        void writeUTF(std::string text);
+        void writeNBT(std::unique_ptr<nbt_base> nbt);
         const std::vector<uint8_t>& get_buffer() const;
 };

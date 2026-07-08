@@ -47,6 +47,18 @@ void output_stream::writeBoolean(bool boolean) {
     this->writeByte(boolean);
 }
 
+void output_stream::writeNBT(std::unique_ptr<nbt_base> base) {
+
+}
+
+void output_stream::writeUTF(std::string text) {
+    writeUShort(text.length());
+    for(uint8_t byte : text) {
+        buf.push_back(byte);
+    }
+}
+
+
 void output_stream::writeProperties(std::vector<login_success_property> properties) {
     this->writeVarInt(properties.size());
     for(login_success_property property : properties) {

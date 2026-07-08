@@ -1,6 +1,5 @@
 #include "input_stream.hpp"
 
-
 input_stream::input_stream(std::vector<uint8_t>& vector) : buf(vector) {}
 
 uint32_t input_stream::readVarInt() {
@@ -75,6 +74,22 @@ bool input_stream::readBoolean() {
     return readByte() != 0;
 }
 
+std::string input_stream::readUTF() {
+    size_t size = readUShort();
+    if(size + offset > buf.size()) {
+        throw std::runtime_error("String out of bound");
+    }
+    std::string textstr = std::string(
+        buf.begin() + offset,
+        buf.begin() + offset + size
+    );
+    offset += size;
+    return textstr;
+}
+
+std::unique_ptr<nbt_base> input_stream::readNBT() {
+    
+}
 
 std::vector<login_success_property> input_stream::readProperties() {
     std::vector<login_success_property> properties;
