@@ -3,7 +3,7 @@
 
 class nbt_tag_compound : public nbt_base {
     private:
-        std::map<std::string, nbt_base> tag_map;
+        std::map<std::string, std::unique_ptr<nbt_base>> tag_map;
     public:
         int get_id();
         void read(input_stream input);
