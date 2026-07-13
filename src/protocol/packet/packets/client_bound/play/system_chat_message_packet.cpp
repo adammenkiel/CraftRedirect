@@ -3,11 +3,11 @@
 //Temporary not work
 //TODO: Add NBT support and fix it!
 system_chat_message_packet::system_chat_message_packet(
-    //nbt_base content,
-    bool overlay
-) : 
-//    content(content),
-    overlay(overlay) {}
+            std::shared_ptr<nbt_base> content,
+            bool overlay
+        ) : 
+        content(content),
+        overlay(overlay) {}
 
 system_chat_message_packet::system_chat_message_packet() {}
 
@@ -22,12 +22,12 @@ packet_state system_chat_message_packet::get_state() {
 }
 
 void system_chat_message_packet::read(input_stream& input) {
-    //content = input.readNBT();
+    content = input.readNBT();
     overlay = input.readBoolean();
 }
 
 void system_chat_message_packet::write(output_stream& output) {
-    //output.writeNBT(content);
+    output.writeNBT(content);
     output.writeBoolean(overlay);
 }
 

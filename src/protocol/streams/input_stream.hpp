@@ -25,7 +25,7 @@ class input_stream {
         uint64_t readLong();
         bool readBoolean();
         std::string readUTF();
-        std::unique_ptr<nbt_base> readNBT();
+        std::shared_ptr<nbt_base> readNBT();
         std::vector<uint8_t> readFully();
         std::vector<login_success_property> readProperties();
 };

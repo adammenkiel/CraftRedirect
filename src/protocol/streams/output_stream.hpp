@@ -23,6 +23,6 @@ class output_stream {
         void writeProperties(std::vector<login_success_property> properties);
         void writeBoolean(bool boolean);
         void writeUTF(std::string text);
-        void writeNBT(std::unique_ptr<nbt_base> nbt);
+        void writeNBT(std::shared_ptr<nbt_base> nbt);
         const std::vector<uint8_t>& get_buffer() const;
 };

@@ -1,11 +1,9 @@
 #include "protocol/nbt/tags/nbt_tag_compound.hpp"
 
-//TODO: Correct it
-
 int nbt_tag_compound::get_id() {
     return 10;
 }
-void nbt_tag_compound::read(input_stream input) {
+void nbt_tag_compound::read(input_stream& input) {
     uint8_t id;
     while((id = input.readByte()) != 0) {
         std::string name = input.readUTF();
@@ -14,7 +12,7 @@ void nbt_tag_compound::read(input_stream input) {
         tag_map[name] = std::move(tag);
     }
 }
-void nbt_tag_compound::write(output_stream output) {
+void nbt_tag_compound::write(output_stream& output) {
     for(auto& pair : tag_map) {
         auto& value = pair.second;
         output.writeByte(value->get_id());
@@ -23,4 +21,5 @@ void nbt_tag_compound::write(output_stream output) {
             value->write(output);
         }
     }
+    output.writeByte(0);
 }

@@ -87,8 +87,8 @@ std::string input_stream::readUTF() {
     return textstr;
 }
 
-std::unique_ptr<nbt_base> input_stream::readNBT() {
-    
+std::shared_ptr<nbt_base> input_stream::readNBT() {
+
 }
 
 std::vector<login_success_property> input_stream::readProperties() {

@@ -1,4 +1,5 @@
 #include "output_stream.hpp"
+#include "protocol/nbt/nbt_base.hpp"
 
 void output_stream::writeVarInt(uint32_t value) {
     while (true) {
@@ -47,8 +48,14 @@ void output_stream::writeBoolean(bool boolean) {
     this->writeByte(boolean);
 }
 
-void output_stream::writeNBT(std::unique_ptr<nbt_base> base) {
-
+void output_stream::writeNBT(std::shared_ptr<nbt_base> base) {
+    this->writeByte(base->get_id());
+    if(base->get_id() != 0) {
+        output_stream s;
+        base->write(s);
+        auto buf = s.get_buffer();
+        this->writeBytes(buf);
+    }
 }
 
 void output_stream::writeUTF(std::string text) {

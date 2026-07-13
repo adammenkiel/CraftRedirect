@@ -3,14 +3,15 @@
 //#include "protocol/nbt/nbt_base.hpp"
 #include "protocol/packet/packet.hpp"
 #include <array>
+#include <memory>
 
 class system_chat_message_packet : public packet {
     public:
-        //nbt_base content;
+        std::shared_ptr<nbt_base> content;
         bool overlay;
         
         system_chat_message_packet(
-            //nbt_base content,
+            std::shared_ptr<nbt_base> content,
             bool overlay
         );
 
