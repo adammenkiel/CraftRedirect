@@ -24,4 +24,6 @@ class session : public std::enable_shared_from_this<session> {
         void sendPacket(packet& packet);
 
         void disconnect();
+
+        void sendSingleMessage(std::string message);
 };

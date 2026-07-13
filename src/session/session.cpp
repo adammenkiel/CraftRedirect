@@ -17,6 +17,7 @@
 #include "protocol/packet/packets/server_bound/configuration/finish_configuration_packet.hpp"
 #include "protocol/packet/packets/server_bound/play/chat_command_packet.hpp"
 
+#include "protocol/packet/packets/client_bound/play/system_chat_message_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/client_known_packs_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/feature_flags_packet.hpp"
 #include "protocol/packet/packets/client_bound/configuration/config_payload_packet.hpp"
@@ -24,6 +25,9 @@
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
 
+#include "protocol/nbt/nbt_base.hpp"
+#include "protocol/nbt/tags/nbt_tag_string.hpp"
+#include "protocol/nbt/tags/nbt_tag_compound.hpp"
 
 #include "protocol/packet/unknown_packet.hpp"
 
@@ -162,6 +166,7 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
             args.push_back(tmp_arg);
         }
         if((server->command_map.find(command_name) == server->command_map.end())) {
+            this->sendSingleMessage("Command doesn't exists!");
             return;
         }
         std::shared_ptr<command> command = server->command_map.at(command_name);
@@ -196,5 +201,12 @@ void session::sendPacket(packet& packet) {
 }
 
 void session::disconnect() {
+    //TODO: end it
+}
 
+void session::sendSingleMessage(std::string message) {
+    nbt_tag_compound compound;
+    compound.tag_map["text"] = std::make_shared<nbt_tag_string>(message);
+    system_chat_message_packet chat_message = system_chat_message_packet(std::make_shared<nbt_tag_compound>(compound), false);
+    this->sendPacket(chat_message);
 }
