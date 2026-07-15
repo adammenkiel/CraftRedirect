@@ -5,6 +5,7 @@
 #include "protocol/packet/unknown_packet.hpp"
 
 #include "command/commands/online_command.hpp"
+#include "command/commands/help_command.hpp"
 
 #include "protocol/packet/packets/server_bound/handshake/handshake_packet.hpp"
 #include "protocol/packet/packets/server_bound/login/login_start_packet.hpp"
@@ -67,7 +68,9 @@ void craft_redirect_server::registerAllPackets() {
 }
 
 void craft_redirect_server::registerCommands() {
-    command_map["online"] = std::make_shared<online_command>(this->shared_from_this());
+    auto shared = this->shared_from_this();
+    command_map["online"] = std::make_shared<online_command>(shared);
+    command_map["help"] = std::make_shared<help_command>(shared);
 }
 
 void craft_redirect_server::loadRegistryPackets() {
