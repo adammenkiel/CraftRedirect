@@ -170,8 +170,8 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
             args.push_back(tmp_arg);
         }
         if((server->command_map.find(command_name) == server->command_map.end())) {
-            this->sendSingleMessage("§7Command doesn't exists!");
-            this->sendSingleMessage("§7Please type §c/help§7 to get help!");
+            this->sendSingleMessage("§7Command §c/" + command_name + "§7 doesn't exists!");
+            this->sendSingleMessage("§7Command list can be found at §c/help");
             return;
         }
         std::shared_ptr<command> command = server->command_map.at(command_name);
