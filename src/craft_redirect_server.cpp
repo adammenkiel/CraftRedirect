@@ -47,7 +47,6 @@ void craft_redirect_server::registerAllPackets() {
     chat_command_packet chat_command = chat_command_packet();
     packets.register_packet(packet_bound::SERVER, packet_state::PLAY, chat_command);
 
-
     client_keep_alive_packet client_keep_alive = client_keep_alive_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, client_keep_alive);
     client_known_packs_packet client_known_packs = client_known_packs_packet();

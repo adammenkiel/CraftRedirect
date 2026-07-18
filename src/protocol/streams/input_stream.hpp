@@ -23,6 +23,7 @@ class input_stream {
         uint16_t readUShort();
         std::vector<uint8_t> readBytes(size_t len);
         uint64_t readLong();
+        uint32_t readInt();
         bool readBoolean();
         std::string readUTF();
         std::shared_ptr<nbt_base> readNBT();

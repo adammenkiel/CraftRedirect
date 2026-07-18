@@ -70,6 +70,14 @@ uint64_t input_stream::readLong() {
     return number;
 }
 
+uint32_t input_stream::readInt() {
+    uint32_t number = 0;
+    for(int i = 0; i < 8; i++) {
+        number = (number << 8) | readByte();
+    }
+    return number;
+}
+
 bool input_stream::readBoolean() {
     return readByte() != 0;
 }

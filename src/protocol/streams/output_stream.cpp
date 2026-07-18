@@ -44,6 +44,12 @@ void output_stream::writeLong(uint64_t value) {
     }
 }
 
+void output_stream::writeInt(uint32_t value) {
+    for(int i = 0; i < 4; i++) {
+        buf.push_back((value >> (3*8 - i*8)) & 0xFF);
+    }
+}
+
 void output_stream::writeBoolean(bool boolean) {
     this->writeByte(boolean);
 }

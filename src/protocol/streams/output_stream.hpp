@@ -20,6 +20,7 @@ class output_stream {
         void writeUShort(uint16_t send);
         void writeBytes(std::vector<uint8_t>& data);
         void writeLong(uint64_t value);
+        void writeInt(uint32_t value);
         void writeProperties(std::vector<login_success_property> properties);
         void writeBoolean(bool boolean);
         void writeUTF(std::string text);
