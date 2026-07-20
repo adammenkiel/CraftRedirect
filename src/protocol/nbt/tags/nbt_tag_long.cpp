@@ -5,9 +5,9 @@ int nbt_tag_long::get_id() {
 }
 
 void nbt_tag_long::read(input_stream& input) {
-    this->value = input.readInt();
+    this->value = input.readLong();
 }
 
 void nbt_tag_long::write(output_stream& output) {
-    output.writeInt(value);
+    output.writeLong(value);
 }
