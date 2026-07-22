@@ -21,6 +21,8 @@ class output_stream {
         void writeBytes(std::vector<uint8_t>& data);
         void writeLong(uint64_t value);
         void writeInt(uint32_t value);
+        void writeFloat(float val);
+        void writeDouble(double val);
         void writeProperties(std::vector<login_success_property> properties);
         void writeBoolean(bool boolean);
         void writeUTF(std::string text);

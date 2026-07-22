@@ -25,6 +25,8 @@ class input_stream {
         uint64_t readLong();
         uint32_t readInt();
         bool readBoolean();
+        float readFloat();
+        double readDouble();
         std::string readUTF();
         std::shared_ptr<nbt_base> readNBT();
         std::vector<uint8_t> readFully();

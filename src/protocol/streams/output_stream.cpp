@@ -71,6 +71,9 @@ void output_stream::writeUTF(std::string text) {
     }
 }
 
+void output_stream::writeDouble(double val) {}
+
+void output_stream::writeFloat(float val) {}
 
 void output_stream::writeProperties(std::vector<login_success_property> properties) {
     this->writeVarInt(properties.size());

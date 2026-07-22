@@ -99,6 +99,14 @@ std::shared_ptr<nbt_base> input_stream::readNBT() {
 
 }
 
+double input_stream::readDouble() {
+
+}
+
+float input_stream::readFloat() {
+    
+}
+
 std::vector<login_success_property> input_stream::readProperties() {
     std::vector<login_success_property> properties;
     uint32_t size = this->readVarInt();
