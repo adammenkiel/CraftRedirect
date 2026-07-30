@@ -5,6 +5,8 @@
 #include <string>
 #include <cstdint>
 #include <memory>
+
+#include "session/position/position.hpp"
 #include "protocol/obj/login_success_property.hpp"
 //#include "protocol/nbt/nbt_base.hpp"
 
@@ -25,6 +27,7 @@ class output_stream {
         void writeDouble(double val);
         void writeProperties(std::vector<login_success_property> properties);
         void writeBoolean(bool boolean);
+        void writePosition(position pos);
         void writeUTF(std::string text);
         void writeNBT(std::shared_ptr<nbt_base> nbt);
         const std::vector<uint8_t>& get_buffer() const;

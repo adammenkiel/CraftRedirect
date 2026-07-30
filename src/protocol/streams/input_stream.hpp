@@ -1,5 +1,6 @@
 #pragma once
 #include "protocol/obj/login_success_property.hpp"
+#include "session/position/position.hpp"
 //#include "protocol/nbt/nbt_base.hpp"
 
 #include <iostream>
@@ -27,6 +28,7 @@ class input_stream {
         bool readBoolean();
         float readFloat();
         double readDouble();
+        position readPosition();        
         std::string readUTF();
         std::shared_ptr<nbt_base> readNBT();
         std::vector<uint8_t> readFully();

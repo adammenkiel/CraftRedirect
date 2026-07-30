@@ -96,15 +96,26 @@ std::string input_stream::readUTF() {
 }
 
 std::shared_ptr<nbt_base> input_stream::readNBT() {
-
+    //TODO: Finish it
 }
 
 double input_stream::readDouble() {
-
+    //TODO: Finish it
+    return 0;
 }
 
 float input_stream::readFloat() {
-    
+    //TODO: Finish it
+    return 0;
+}
+
+position input_stream::readPosition() {
+    uint64_t val = this->readLong();
+
+    uint32_t x = val >> 38;
+    uint32_t y = val << 52 >> 52;
+    uint32_t z = val << 26 >> 38;
+    return position(x,y,z);
 }
 
 std::vector<login_success_property> input_stream::readProperties() {

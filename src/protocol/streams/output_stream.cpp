@@ -19,6 +19,10 @@ void output_stream::writeString(std::string& text) {
     }
 }
 
+void output_stream::writePosition(position pos) {
+    writeLong(((pos.x & 0x3FFFFFF) << 38) | ((pos.z & 0x3FFFFFF) << 12) | (pos.y & 0xFFF));
+}
+
 void output_stream::writeByte(uint8_t send) {
     buf.push_back(send);
 }
