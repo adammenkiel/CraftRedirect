@@ -1,6 +1,8 @@
 #pragma once
 
 #include "protocol/packet/packet.hpp"
+#include "session/position/position.hpp"
+
 #include <array>
 
 class login_packet : public packet {
@@ -23,7 +25,7 @@ class login_packet : public packet {
         bool is_flat;
         bool has_death_location;
         std::string death_dimension_name; // optional
-        uint64_t death_location; // change to location class or structure!
+        position death_location; // change to location class or structure!
         uint32_t portal_cooldown;
         bool enforces_secure_chat;
         
@@ -46,7 +48,7 @@ class login_packet : public packet {
             bool is_flat,
             bool has_death_location,
             std::string death_dimension_name, // optional
-            uint64_t death_location, // optional
+            position death_location, // optional
             uint32_t portal_cooldown,
             bool enforces_secure_chat
         );

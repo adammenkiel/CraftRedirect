@@ -19,7 +19,7 @@ login_packet::login_packet(
             bool is_flat,
             bool has_death_location,
             std::string death_dimension_name, // optional
-            uint64_t death_location, // optional
+            position death_location, // optional
             uint32_t portal_cooldown,
             bool enforces_secure_chat
 ) : 
@@ -58,11 +58,57 @@ packet_state login_packet::get_state() {
 }
 
 void login_packet::read(input_stream& input) {
-    //TODO: finish it
+    this->entity_id = input.readInt();
+    this->is_hardcore = input.readBoolean();
+    int len = input.readVarInt();
+    for(int i = 0; i < len; i++) dimension_names.push_back(input.readString());
+    this->max_players = input.readVarInt();
+    this->view_distance = input.readVarInt();
+    this->simulation_distance = input.readVarInt();
+    this->reduced_debug_info = input.readBoolean();
+    this->enable_respawn_screen = input.readBoolean();
+    this->do_limited_crafting = input.readBoolean();
+    this->dimension_type = input.readVarInt();
+    this->dimension_name = input.readString();
+    this->hashed_seed = input.readLong();
+    this->game_mode = input.readByte();
+    this->previous_game_mode = input.readByte();
+    this->is_debug = input.readBoolean();
+    this->is_flat = input.readBoolean();
+    this->has_death_location = input.readBoolean();
+    if(this->has_death_location) {
+        this->death_dimension_name = input.readString();
+        this->death_location = input.readPosition();
+    }
+    this->portal_cooldown = input.readVarInt();
+    this->enforces_secure_chat = input.readBoolean();
 }
 
 void login_packet::write(output_stream& output) {
-    //TODO: finish it
+    output.writeInt(this->entity_id);
+    output.writeBoolean(this->is_hardcore);
+    output.writeVarInt(this->dimension_name.size());
+    for(std::string d_name : dimension_names) output.writeString(d_name);
+    output.writeVarInt(this->max_players);
+    output.writeVarInt(this->view_distance);
+    output.writeVarInt(this->simulation_distance);
+    output.writeBoolean(this->reduced_debug_info);
+    output.writeBoolean(this->enable_respawn_screen);
+    output.writeBoolean(this->do_limited_crafting);
+    output.writeVarInt(this->dimension_type);
+    output.writeString(this->dimension_name);
+    output.writeLong(this->hashed_seed);
+    output.writeByte(this->game_mode);
+    output.writeByte(this->previous_game_mode);
+    output.writeBoolean(this->is_debug);
+    output.writeBoolean(this->is_flat);
+    output.writeBoolean(this->has_death_location);
+    if(this->has_death_location) {
+        output.writeString(this->death_dimension_name);
+        output.writePosition(this->death_location);
+    }
+    output.writeVarInt(this->portal_cooldown);
+    output.writeBoolean(this->enforces_secure_chat);
 }
 
 std::unique_ptr<packet> login_packet::clone() {
