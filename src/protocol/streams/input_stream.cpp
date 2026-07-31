@@ -100,13 +100,17 @@ std::shared_ptr<nbt_base> input_stream::readNBT() {
 }
 
 double input_stream::readDouble() {
-    //TODO: Finish it
-    return 0;
+    double converted;
+    uint64_t val = this->readLong();
+    memcpy(&converted, &val, sizeof(uint64_t));
+    return converted;
 }
 
 float input_stream::readFloat() {
-    //TODO: Finish it
-    return 0;
+    float converted;
+    uint32_t val = this->readInt();
+    memcpy(&converted, &val, sizeof(uint32_t));
+    return converted;
 }
 
 position input_stream::readPosition() {

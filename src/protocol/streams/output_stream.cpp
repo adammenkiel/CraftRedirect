@@ -79,9 +79,17 @@ void output_stream::writeUTF(std::string text) {
     }
 }
 
-void output_stream::writeDouble(double val) {}
+void output_stream::writeDouble(double val) {
+    uint64_t converted;
+    memcpy(&converted, &val, sizeof(converted));
+    this->writeLong(converted);
+}
 
-void output_stream::writeFloat(float val) {}
+void output_stream::writeFloat(float val) {
+    uint32_t converted;
+    memcpy(&converted, &val, sizeof(converted));
+    this->writeInt(converted);
+}
 
 void output_stream::writeProperties(std::vector<login_success_property> properties) {
     this->writeVarInt(properties.size());

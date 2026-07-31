@@ -26,6 +26,9 @@
 #include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
 #include "protocol/packet/packets/client_bound/play/system_chat_message_packet.hpp"
 #include "protocol/packet/packets/client_bound/play/login_packet.hpp"
+#include "protocol/packet/packets/client_bound/play/player_abilities_packet.hpp"
+#include "protocol/packet/packets/client_bound/play/game_event_packet.hpp"
+#include "protocol/packet/packets/client_bound/play/synchronize_player_position_packet.hpp"
 
 void craft_redirect_server::registerAllPackets() {
     spdlog::info("Registering packets...");
@@ -64,6 +67,12 @@ void craft_redirect_server::registerAllPackets() {
     packets.register_packet(packet_bound::CLIENT, packet_state::LOGIN, login_success);
     login_packet login = login_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, login);
+    player_abilities_packet player_abilities = player_abilities_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, player_abilities);
+    game_event_packet game_event = game_event_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, game_event);
+    synchronize_player_position_packet player_position = synchronize_player_position_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, player_position);
     //system_chat_message_packet system_chat_message = system_chat_message_packet();
     //packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, system_chat_message);
     spdlog::info("Finished!");
