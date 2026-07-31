@@ -17,7 +17,6 @@ login_packet::login_packet(
             uint8_t previous_game_mode,
             bool is_debug,
             bool is_flat,
-            bool has_death_location,
             std::string death_dimension_name, // optional
             position death_location, // optional
             uint32_t portal_cooldown,
@@ -39,9 +38,49 @@ login_packet::login_packet(
     previous_game_mode(previous_game_mode),
     is_debug(is_debug),
     is_flat(is_flat),
-    has_death_location(has_death_location),
+    has_death_location(true),
     death_dimension_name(death_dimension_name), // optional
     death_location(death_location), // optional
+    portal_cooldown(portal_cooldown),
+    enforces_secure_chat(enforces_secure_chat) {}
+
+    login_packet::login_packet(
+            uint32_t entity_id,
+            bool is_hardcore,
+            std::vector<std::string> dimension_names,
+            uint32_t max_players,
+            uint32_t view_distance,
+            uint32_t simulation_distance,
+            bool reduced_debug_info,
+            bool enable_respawn_screen,
+            bool do_limited_crafting,
+            uint32_t dimension_type,
+            std::string dimension_name,
+            uint64_t hashed_seed,
+            uint8_t game_mode,
+            uint8_t previous_game_mode,
+            bool is_debug,
+            bool is_flat,
+            uint32_t portal_cooldown,
+            bool enforces_secure_chat
+) : 
+    entity_id(entity_id),
+    is_hardcore(is_hardcore),
+    dimension_names(dimension_names),
+    max_players(max_players),
+    view_distance(view_distance),
+    simulation_distance(simulation_distance),
+    reduced_debug_info(reduced_debug_info),
+    enable_respawn_screen(enable_respawn_screen),
+    do_limited_crafting(do_limited_crafting),
+    dimension_type(dimension_type),
+    dimension_name(dimension_name),
+    hashed_seed(hashed_seed),
+    game_mode(game_mode),
+    previous_game_mode(previous_game_mode),
+    is_debug(is_debug),
+    is_flat(is_flat),
+    has_death_location(false),
     portal_cooldown(portal_cooldown),
     enforces_secure_chat(enforces_secure_chat) {}
 
@@ -87,7 +126,7 @@ void login_packet::read(input_stream& input) {
 void login_packet::write(output_stream& output) {
     output.writeInt(this->entity_id);
     output.writeBoolean(this->is_hardcore);
-    output.writeVarInt(this->dimension_name.size());
+    output.writeVarInt(this->dimension_names.size());
     for(std::string d_name : dimension_names) output.writeString(d_name);
     output.writeVarInt(this->max_players);
     output.writeVarInt(this->view_distance);

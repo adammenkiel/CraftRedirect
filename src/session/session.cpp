@@ -24,6 +24,7 @@
 #include "protocol/packet/packets/client_bound/status/status_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
+#include "protocol/packet/packets/client_bound/play/login_packet.hpp"
 
 #include "protocol/nbt/nbt_base.hpp"
 #include "protocol/nbt/tags/nbt_tag_string.hpp"
@@ -134,9 +135,14 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         state = packet_state::PLAY;
         spdlog::info("Configuration finished!");
         spdlog::info("Sending empty world...");
-        unknown_packet play_pack1 = unknown_packet(packet_state::PLAY, 43,
-        std::vector<uint8_t>({0, 0, 3, 248, 0, 3, 19, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 111, 118, 101, 114, 119, 111, 114, 108, 100, 20, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 116, 104, 101, 95, 110, 101, 116, 104, 101, 114, 17, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 116, 104, 101, 95, 101, 110, 100, 20, 10, 10, 0, 1, 0, 0, 19, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 111, 118, 101, 114, 119, 111, 114, 108, 100, 24, 168, 208, 236, 249, 181, 15, 25, 1, 0, 0, 0, 1, 19, 109, 105, 110, 101, 99, 114, 97, 102, 116, 58, 111, 118, 101, 114, 119, 111, 114, 108, 100, 0, 0, 36, 64, 0, 2, 80, 72, 0, 0}));
-        this->sendPacket(play_pack1);
+        std::vector<std::string> dimension_names;
+        dimension_names.push_back("minecraft:overworld");
+        dimension_names.push_back("minecraft:the_nether");
+        dimension_names.push_back("minecraft:the_end");
+        
+        login_packet login = login_packet(1016, false, dimension_names, 1000, 10, 10, 0, 1, 0, 0, "minecraft:overworld", 1776899957149181400ULL, 1, 0, 0, 0, "minecraft:overworld", position(0,0,0), 0, 0);
+        this->sendPacket(login);
+
         unknown_packet play_pack3 = unknown_packet(packet_state::PLAY, 56,
         std::vector<uint8_t>({15, 61, 76, 204, 205, 61, 204, 204, 205}));
         this->sendPacket(play_pack3);

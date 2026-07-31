@@ -25,6 +25,7 @@
 #include "protocol/packet/packets/client_bound/status/ping_response_packet.hpp"
 #include "protocol/packet/packets/client_bound/login/login_success_packet.hpp"
 #include "protocol/packet/packets/client_bound/play/system_chat_message_packet.hpp"
+#include "protocol/packet/packets/client_bound/play/login_packet.hpp"
 
 void craft_redirect_server::registerAllPackets() {
     spdlog::info("Registering packets...");
@@ -61,6 +62,8 @@ void craft_redirect_server::registerAllPackets() {
     packets.register_packet(packet_bound::CLIENT, packet_state::STATUS, ping_response);
     login_success_packet login_success = login_success_packet();
     packets.register_packet(packet_bound::CLIENT, packet_state::LOGIN, login_success);
+    login_packet login = login_packet();
+    packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, login);
     //system_chat_message_packet system_chat_message = system_chat_message_packet();
     //packets.register_packet(packet_bound::CLIENT, packet_state::PLAY, system_chat_message);
     spdlog::info("Finished!");
