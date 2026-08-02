@@ -149,7 +149,7 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         player_abilities_packet abilities = player_abilities_packet(15, 0.05, 0.1);
         this->sendPacket(abilities);
 
-        synchronize_player_position_packet player_position = synchronize_player_position_packet(806.0d, 81.0d, 580.0d, 13.f, 48.f, 0, 1);
+        synchronize_player_position_packet player_position = synchronize_player_position_packet(806.0, 81.0, 580.0, 13.f, 48.f, 0, 1);
         this->sendPacket(player_position);
 
         game_event_packet game_event = game_event_packet(13, 0.0f);
