@@ -5,6 +5,7 @@ class nbt_tag_compound : public nbt_base {
     public:
         std::map<std::string, std::shared_ptr<nbt_base>> tag_map;
         int get_id();
+        std::string to_string();
         void read(input_stream& input);
         void write(output_stream& output);
         ~nbt_tag_compound() = default;

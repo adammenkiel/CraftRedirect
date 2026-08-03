@@ -4,6 +4,14 @@ int nbt_tag_list::get_id() {
     return 9;
 }
 
+std::string nbt_tag_list::to_string() {
+    std::string array_text = "[";
+    for(auto val : this->values) {
+        array_text += val->to_string() + ", ";
+    }
+    return array_text + "]";
+}
+
 void nbt_tag_list::read(input_stream& input) {
     uint8_t id = input.readByte();
     uint32_t size = input.readInt();

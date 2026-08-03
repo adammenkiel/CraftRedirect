@@ -4,6 +4,10 @@ int nbt_tag_float::get_id() {
     return 5;
 }
 
+std::string nbt_tag_float::to_string() {
+    return std::to_string(this->value);
+}
+
 void nbt_tag_float::read(input_stream& input) {
     this->value = input.readFloat();
 }

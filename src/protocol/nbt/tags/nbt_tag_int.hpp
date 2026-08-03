@@ -5,6 +5,7 @@ class nbt_tag_int : public nbt_base {
         uint32_t value;
     public:
         int get_id();
+        std::string to_string();
         void read(input_stream& input);
         void write(output_stream& output);
         ~nbt_tag_int() = default;

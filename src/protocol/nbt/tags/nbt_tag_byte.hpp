@@ -5,6 +5,7 @@ class nbt_tag_byte : public nbt_base {
         uint8_t value;
     public:
         int get_id();
+        std::string to_string();
         void read(input_stream& input);
         void write(output_stream& output);
         ~nbt_tag_byte() = default;

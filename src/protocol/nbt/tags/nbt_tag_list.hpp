@@ -5,6 +5,7 @@ class nbt_tag_list : public nbt_base {
         std::vector<std::shared_ptr<nbt_base>> values;
     public:
         int get_id();
+        std::string to_string();
         void read(input_stream& input);
         void write(output_stream& output);
         ~nbt_tag_list() = default;

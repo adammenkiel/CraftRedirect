@@ -3,6 +3,16 @@
 int nbt_tag_compound::get_id() {
     return 10;
 }
+
+std::string nbt_tag_compound::to_string() {
+    std::string name = "{";
+    for(auto elem : tag_map) {
+        name += "\""+elem.first + "\": " + elem.second->to_string() + ", ";
+    }
+    name += "}";
+    return name;
+}
+
 void nbt_tag_compound::read(input_stream& input) {
     uint8_t id;
     while((id = input.readByte()) != 0) {
