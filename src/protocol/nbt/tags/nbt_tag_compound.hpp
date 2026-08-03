@@ -1,3 +1,5 @@
+#pragma once
+
 #include "protocol/nbt/nbt_base.hpp"
 #include <map>
 

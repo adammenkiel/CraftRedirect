@@ -1,5 +1,8 @@
 #include "input_stream.hpp"
 
+#include "protocol/nbt/nbt_tag_manager.hpp"
+#include "protocol/nbt/tags/nbt_tag_end.hpp"
+
 input_stream::input_stream(std::vector<uint8_t>& vector) : buf(vector) {}
 
 uint32_t input_stream::readVarInt() {
@@ -96,7 +99,12 @@ std::string input_stream::readUTF() {
 }
 
 std::shared_ptr<nbt_base> input_stream::readNBT() {
-    //TODO: Finish it
+    uint8_t base_id = this->readByte();
+    nbt_tag_end end;
+    if(base_id == 0) return std::make_shared<nbt_tag_end>(end);
+    auto base = nbt_tag_manager::get_tag_by_id(base_id);
+    base->read(*this);
+    return base;
 }
 
 double input_stream::readDouble() {

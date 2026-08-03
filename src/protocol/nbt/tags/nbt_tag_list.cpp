@@ -1,4 +1,5 @@
 #include "protocol/nbt/tags/nbt_tag_list.hpp"
+#include "protocol/nbt/nbt_tag_manager.hpp"
 
 int nbt_tag_list::get_id() {
     return 9;
@@ -16,7 +17,7 @@ void nbt_tag_list::read(input_stream& input) {
     uint8_t id = input.readByte();
     uint32_t size = input.readInt();
     for(int i = 0; i < size; i++) {
-        auto base = this->get_tag_by_id(id);
+        auto base = nbt_tag_manager::get_tag_by_id(id);
         base->read(input);
         this->values.push_back(std::move(base));
     }
