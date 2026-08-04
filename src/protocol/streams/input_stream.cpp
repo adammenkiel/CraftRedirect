@@ -75,7 +75,7 @@ uint64_t input_stream::readLong() {
 
 uint32_t input_stream::readInt() {
     uint32_t number = 0;
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < 4; i++) {
         number = (number << 8) | readByte();
     }
     return number;

@@ -19,7 +19,7 @@ void nbt_tag_list::read(input_stream& input) {
     for(int i = 0; i < size; i++) {
         auto base = nbt_tag_manager::get_tag_by_id(id);
         base->read(input);
-        this->values.push_back(std::move(base));
+        this->values.push_back(base);
     }
 }
 
