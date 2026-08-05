@@ -2,9 +2,8 @@
 #include "protocol/nbt/nbt_base.hpp"
 
 class nbt_tag_list : public nbt_base {
-    private:
-        std::vector<std::shared_ptr<nbt_base>> values;
     public:
+        std::vector<std::shared_ptr<nbt_base>> values;
         int get_id();
         std::string to_string();
         void read(input_stream& input);

@@ -32,6 +32,8 @@
 #include "protocol/nbt/nbt_base.hpp"
 #include "protocol/nbt/tags/nbt_tag_string.hpp"
 #include "protocol/nbt/tags/nbt_tag_compound.hpp"
+#include "protocol/nbt/tags/nbt_tag_list.hpp"
+#include "protocol/nbt/tags/nbt_tag_byte.hpp"
 
 #include "protocol/packet/unknown_packet.hpp"
 

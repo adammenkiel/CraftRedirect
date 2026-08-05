@@ -43,8 +43,8 @@ void synchronize_player_position_packet::write(output_stream& output) {
     output.writeDouble(this->x);
     output.writeDouble(this->y);
     output.writeDouble(this->z);
-    output.writeFloat(this->pitch);
     output.writeFloat(this->yaw);
+    output.writeFloat(this->pitch);
     output.writeByte(this->flags);
     output.writeVarInt(this->teleport_id);
 }
