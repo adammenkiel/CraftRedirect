@@ -5,7 +5,8 @@
 
 class online_command : public command {
     public:
-        explicit online_command(std::shared_ptr<craft_redirect_server> server) : command(server) {};
+        explicit online_command(std::shared_ptr<craft_redirect_server> server) :
+        command(server, "online", {"list"}, "Shows player count") {};
         void execute(std::shared_ptr<session> s, std::vector<std::string> args);
         ~online_command() = default;
 };
