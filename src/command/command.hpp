@@ -1,6 +1,6 @@
 #pragma once
-#include <session/session.hpp>
 #include <vector>
+#include <string>
 
 class session;
 class craft_redirect_server;

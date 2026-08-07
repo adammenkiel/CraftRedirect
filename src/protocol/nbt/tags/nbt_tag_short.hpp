@@ -2,7 +2,7 @@
 
 class nbt_tag_short : public nbt_base {
     private:
-        uint64_t value;
+        uint16_t value;
     public:
         int get_id();
         std::string to_string();
@@ -10,5 +10,5 @@ class nbt_tag_short : public nbt_base {
         void write(output_stream& output);
         ~nbt_tag_short() = default;
         nbt_tag_short() {};
-        nbt_tag_short(uint64_t value) : value(value) {};
+        nbt_tag_short(uint16_t value) : value(value) {};
 };

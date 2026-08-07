@@ -180,12 +180,14 @@ void session::handle(std::unique_ptr<packet> handled_packet) {
         while(label_stream >> tmp_arg) {
             args.push_back(tmp_arg);
         }
-        if((server->command_map.find(command_name) == server->command_map.end())) {
+        //(server->command_map.find(command_name) == server->command_map.end())
+        
+        if(!server->command_manager.is_command_exists(command_name)) {
             this->sendSingleMessage("§7Command §c/" + command_name + "§7 doesn't exists!");
             this->sendSingleMessage("§7Command list can be found at §c/help");
             return;
         }
-        std::shared_ptr<command> command = server->command_map.at(command_name);
+        std::shared_ptr<command> command = server->command_manager.get_command(command_name); //command_map.at(command_name);
         command->execute(shared_from_this(), args);
     }
 

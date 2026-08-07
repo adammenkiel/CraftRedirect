@@ -5,7 +5,9 @@
 #include <spdlog/spdlog.h>
 #include <memory>
 #include <map>
-#include <command/command.hpp>
+
+#include "command/command.hpp"
+#include "command/command_manager.hpp"
 
 #include "protocol/streams/output_stream.hpp"
 #include "protocol/streams/input_stream.hpp"
@@ -27,6 +29,8 @@ class craft_redirect_server : public std::enable_shared_from_this<craft_redirect
         packet_registry packets;
         std::vector<std::shared_ptr<session>> sessions;
         std::vector<std::unique_ptr<packet>> config_packets;
-        std::map<std::string, std::shared_ptr<command>> command_map;
+        command_manager command_manager;
+        //std::map<std::string, std::shared_ptr<command>> command_map;
+        
         void run();
 };

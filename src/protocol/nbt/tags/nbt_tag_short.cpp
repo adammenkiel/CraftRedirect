@@ -9,9 +9,9 @@ std::string nbt_tag_short::to_string() {
 }
 
 void nbt_tag_short::read(input_stream& input) {
-    this->value = input.readLong();
+    this->value = input.readUShort();
 }
 
 void nbt_tag_short::write(output_stream& output) {
-    output.writeLong(value);
+    output.writeUShort(value);
 }

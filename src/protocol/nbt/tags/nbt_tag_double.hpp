@@ -2,7 +2,7 @@
 
 class nbt_tag_double : public nbt_base {
     private:
-        uint32_t value;
+        double value;
     public:
         int get_id();
         std::string to_string();

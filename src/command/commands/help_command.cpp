@@ -4,8 +4,7 @@
 
 void help_command::execute(std::shared_ptr<session> s, std::vector<std::string> args) {
     s->sendSingleMessage("§7Server commands:");
-    for(auto& line : server->command_map) {
-        std::shared_ptr<command> command = line.second;
+    for(std::shared_ptr<command> command : server->command_manager.commands) {
         s->sendSingleMessage("§7- §c/" + command->command_name + "§8 - §7" + command->description);
     }
 }
